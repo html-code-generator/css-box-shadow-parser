@@ -1,11 +1,11 @@
 {
   "name": "css-box-shadow-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse CSS box-shadow values into structured layer objects",
   "main": "parser.js",
   "scripts": {
-    "example": "node nmp/usage.js",
-    "sync": "node -e \"const fs=require('fs'); fs.copyFileSync('parser.js','nmp/index.js'); fs.copyFileSync('LICENSE','nmp/LICENSE'); console.log('Synced parser.js & LICENSE → nmp/');\""
+    "example": "node npm/usage.js",
+    "sync": "node -e \"const fs=require('fs'); fs.copyFileSync('parser.js','npm/index.js'); fs.copyFileSync('LICENSE','npm/LICENSE'); console.log('Synced parser.js & LICENSE → npm/');\""
   },
   "license": "MIT"
 }

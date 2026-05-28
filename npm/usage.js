@@ -2,7 +2,7 @@ const { parse, parseSingle, split } = require('./index');
 
 // ── Utility ───────────────────────────────────────────────────────────────────
 
-const hr  = (label) => console.log(`\n${'─'.repeat(50)}\n  ${label}\n${'─'.repeat(50)}`);
+const hr  = (label) => console.log(`\n${'-'.repeat(50)}\n  ${label}\n${'-'.repeat(50)}`);
 const out = (value)  => console.log(JSON.stringify(value, null, 2));
 
 // ── 1. Simple shadow ──────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 {
   "name": "css-box-shadow-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse CSS box-shadow values into structured layer objects. Supports multi-layer, inset, all color formats (hex, rgb, hsl, named), and full CSS declarations.",
   "main": "index.js",
   "scripts": {

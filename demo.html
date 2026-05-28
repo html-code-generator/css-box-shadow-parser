@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Box Shadow Parser — Demo</title>
+    <title>Box Shadow Parser - Demo</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -29,7 +29,7 @@
             margin-bottom: 40px;
         }
 
-        /* ── Custom input ───────────────────────────────────────── */
+        /* - Custom input */
 
         .custom-panel {
             background: #18181f;
@@ -107,7 +107,7 @@
             color: #aaa;
         }
 
-        /* ── Examples grid ──────────────────────────────────────── */
+        /* - Examples grid */
 
         .section-title {
             font-size: .7rem;
@@ -166,7 +166,7 @@
             line-height: 1.5;
         }
 
-        /* ── Parse output ───────────────────────────────────────── */
+        /* - Parse output */
 
         .output-panel {
             background: #18181f;
@@ -236,18 +236,23 @@
 </div>
 
 <!-- Parse output -->
-<div class="output-panel">
+<div class="output-panel" id="output-panel">
     <p class="section-title">Parsed layers</p>
     <div id="output"><p class="empty-state">Select an example or enter a value above.</p></div>
 </div>
 
-<!-- Example cards -->
-<p class="section-title">Examples</p>
-<div class="grid" id="cards"></div>
+<!-- Shadow style examples -->
+<p class="section-title" style="margin-top:48px">Shadow styles</p>
+<div class="grid" id="cards-styles"></div>
+
+<!-- Color format examples -->
+<p class="section-title">Color formats</p>
+<div class="grid" id="cards-formats"></div>
 
 <script src="parser.js"></script>
 <script>
-const EXAMPLES = [
+
+const STYLE_EXAMPLES = [
     {
         label: 'Simple drop shadow',
         css: '4px 4px 10px rgba(0,0,0,0.4)',
@@ -284,7 +289,7 @@ const EXAMPLES = [
         bg: '#111',
     },
     {
-        label: 'Sunset gradient shadow',
+        label: 'Sunset stacked offset',
         css: '4px 4px 0 #ff6b6b, 8px 8px 0 #ffa07a, 12px 12px 0 #ffd700',
         bg: '#fff',
     },
@@ -294,23 +299,13 @@ const EXAMPLES = [
         bg: '#5a52e0',
     },
     {
-        label: 'Spread-only border',
+        label: 'Spread-only ring border',
         css: '0 0 0 3px #6c63ff',
         bg: '#fff',
     },
     {
         label: 'Named color shadow',
         css: '4px 4px 12px coral, -4px -4px 12px steelblue',
-        bg: '#fff',
-    },
-    {
-        label: 'Transparent + hex alpha',
-        css: '0 8px 24px #00000066',
-        bg: '#fff',
-    },
-    {
-        label: 'HSL color shadow',
-        css: '0 6px 20px hsl(270 80% 50% / 0.6)',
         bg: '#fff',
     },
     {
@@ -323,17 +318,123 @@ const EXAMPLES = [
         css: '0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12)',
         bg: '#ffffff',
     },
+    {
+        label: 'Negative x/y offsets',
+        css: '-6px -6px 16px rgba(108,99,255,0.4)',
+        bg: '#ffffff',
+    },
+    {
+        label: 'Large spread diffuse',
+        css: '0 0 0 12px rgba(108,99,255,0.15)',
+        bg: '#ffffff',
+    },
 ];
 
-function renderCards() {
-    const grid = document.getElementById('cards');
-    EXAMPLES.forEach((ex, i) => {
+const FORMAT_EXAMPLES = [
+    // - Hex
+    {
+        label: '3-digit hex',
+        css: '0 0 16px #f00',
+        bg: '#fff',
+    },
+    {
+        label: '4-digit hex + alpha',
+        css: '0 4px 16px #0006',
+        bg: '#fff',
+    },
+    {
+        label: '6-digit hex',
+        css: '4px 4px 0 #ff6347',
+        bg: '#fff',
+    },
+    {
+        label: '8-digit hex + alpha',
+        css: '0 8px 24px #6c63ff66',
+        bg: '#fff',
+    },
+    // - rgb / rgba
+    {
+        label: 'rgb() comma',
+        css: '6px 6px 0 rgb(255, 99, 71)',
+        bg: '#fff',
+    },
+    {
+        label: 'rgba() comma + alpha',
+        css: '0 8px 24px rgba(108, 99, 255, 0.55)',
+        bg: '#fff',
+    },
+    {
+        label: 'rgb() space syntax',
+        css: '6px 6px 0 rgb(100 149 237)',
+        bg: '#fff',
+    },
+    {
+        label: 'rgba() space / slash alpha',
+        css: '0 8px 24px rgba(108 99 255 / 0.55)',
+        bg: '#fff',
+    },
+    // - hsl / hsla
+    {
+        label: 'hsl() comma',
+        css: '0 6px 20px hsl(270, 80%, 50%)',
+        bg: '#fff',
+    },
+    {
+        label: 'hsl() space + slash alpha',
+        css: '0 6px 20px hsl(270 80% 50% / 0.6)',
+        bg: '#fff',
+    },
+    {
+        label: 'hsl() deg unit',
+        css: '0 4px 16px hsl(200deg 70% 50%)',
+        bg: '#fff',
+    },
+    {
+        label: 'hsla() comma + alpha',
+        css: '0 6px 20px hsla(340, 82%, 52%, 0.7)',
+        bg: '#fff',
+    },
+    // - Named colors & keywords
+    {
+        label: 'Named color',
+        css: '0 0 28px 6px rebeccapurple',
+        bg: '#fff',
+    },
+    {
+        label: 'transparent (alpha = 0)',
+        css: '0 4px 20px 4px transparent',
+        bg: '#e0e5ec',
+    },
+    {
+        label: 'currentcolor',
+        css: '0 4px 16px currentcolor',
+        bg: '#fff',
+    },
+    // - Declaration formats
+    {
+        label: 'Full CSS declaration',
+        css: 'box-shadow: 4px 8px 16px rgba(0,0,0,0.3);',
+        bg: '#fff',
+    },
+    {
+        label: 'inset keyword at end',
+        css: '0 2px 12px rgba(0,0,0,0.4) inset',
+        bg: '#e8e8ed',
+    },
+];
+
+function toPreviewCSS(css) {
+    return css.trim().replace(/^box-shadow\s*:\s*/i, '').replace(/;$/, '').trim();
+}
+
+function renderCards(examples, gridId) {
+    const grid = document.getElementById(gridId);
+    examples.forEach((ex) => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.dataset.index = i;
         card.innerHTML = `
             <div class="card-preview">
-                <div class="shadow-box" style="background:${ex.bg};box-shadow:${ex.css}"></div>
+                <div class="shadow-box" style="background:${ex.bg};box-shadow:${toPreviewCSS(ex.css)}"></div>
             </div>
             <div class="card-label">${ex.label}</div>
             <div class="card-css">${ex.css}</div>
@@ -342,7 +443,7 @@ function renderCards() {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             card.classList.add('active');
             renderOutput(BoxShadowParser.parse(ex.css));
-            document.querySelector('.output-panel').scrollIntoView({ behavior: 'instant', block: 'start' });
+            document.getElementById('output-panel').scrollIntoView({ behavior: 'instant', block: 'start' });
         });
         grid.appendChild(card);
     });
@@ -414,7 +515,7 @@ function parseCustom() {
 
     const layers = BoxShadowParser.parse(input);
     document.getElementById('custom-result').textContent =
-        `→ ${layers.length} layer${layers.length !== 1 ? 's' : ''} parsed`;
+        `-> ${layers.length} layer${layers.length !== 1 ? 's' : ''} parsed`;
 
     renderOutput(layers);
 }
@@ -423,7 +524,9 @@ document.getElementById('custom-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) parseCustom();
 });
 
-renderCards();
+renderCards(STYLE_EXAMPLES, 'cards-styles');
+renderCards(FORMAT_EXAMPLES, 'cards-formats');
+
 </script>
 </body>
 </html>
