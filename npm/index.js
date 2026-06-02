@@ -1,5 +1,5 @@
 /*!
- * css-box-shadow-parser v1.0.1
+ * css-box-shadow-parser v1.1.0
  * Parse CSS box-shadow values into structured layer objects.
  * https://github.com/html-code-generator/css-box-shadow-parser
  *
@@ -378,10 +378,57 @@
             return splitShadows(trimmed).map(parseSingleShadow).filter(Boolean);
         };
 
+        const lengthToCss = (value) => {
+            const num = Number(value) || 0;
+            return num === 0 ? '0' : `${num}px`;
+        };
+
+        const colorToCss = (layer) => {
+            // Prefer the original color token when present (faithful round-trip)
+            if (layer.color && typeof layer.color === 'string') return layer.color;
+
+            const hex = typeof layer.hex === 'string' ? layer.hex : UNRESOLVED_COLOR_HEX;
+            if (typeof layer.alpha === 'number' && layer.alpha < 1) {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `rgba(${r}, ${g}, ${b}, ${layer.alpha})`;
+            }
+            return hex;
+        };
+
+        const stringifyLayer = (layer) => {
+            if (!layer || typeof layer !== 'object') return '';
+
+            const blur = Number(layer.blur) || 0;
+            const spread = Number(layer.spread) || 0;
+            const parts = [];
+
+            if (layer.inset) parts.push('inset');
+            parts.push(lengthToCss(layer.x));
+            parts.push(lengthToCss(layer.y));
+            // blur is required when spread is present (CSS orders blur before spread)
+            if (blur !== 0 || spread !== 0) parts.push(lengthToCss(blur));
+            if (spread !== 0) parts.push(lengthToCss(spread));
+
+            const color = colorToCss(layer);
+            if (color) parts.push(color);
+
+            return parts.join(' ');
+        };
+
+        const stringifyBoxShadow = (input) => {
+            if (Array.isArray(input)) {
+                return input.map(stringifyLayer).filter(Boolean).join(', ');
+            }
+            return stringifyLayer(input);
+        };
+
         return {
             parse: parseBoxShadow,
             split: splitShadows,
             parseSingle: parseSingleShadow,
+            stringify: stringifyBoxShadow,
         };
     }
 ));

@@ -1,11 +1,12 @@
 {
   "name": "css-box-shadow-parser",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Parse CSS box-shadow values into structured layer objects. Supports multi-layer, inset, all color formats (hex, rgb, hsl, named), and full CSS declarations.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "example": "node usage.js",
-    "prepublishOnly": "node -e \"const fs=require('fs'); fs.copyFileSync('../parser.js','index.js'); fs.copyFileSync('../LICENSE','LICENSE'); console.log('Synced parser.js → index.js & LICENSE');\""
+    "prepublishOnly": "node -e \"const fs=require('fs'); fs.copyFileSync('../parser.js','index.js'); fs.copyFileSync('../index.d.ts','index.d.ts'); fs.copyFileSync('../LICENSE','LICENSE'); console.log('Synced parser.js, index.d.ts & LICENSE');\""
   },
   "keywords": [
     "css",
@@ -24,7 +25,9 @@
   "license": "MIT",
   "files": [
     "index.js",
+    "index.d.ts",
     "README.md",
+    "CHANGELOG.md",
     "usage.js"
   ],
   "engines": {

@@ -1,7 +1,9 @@
 # css-box-shadow-parser
 
-Parse any CSS `box-shadow` value into structured JavaScript objects.  
-Works in **Node.js** and the **browser**. Zero dependencies.
+Parse any CSS `box-shadow` value into structured JavaScript objects - and turn them back into CSS.  
+Works in **Node.js** and the **browser**. Built-in TypeScript types. Zero dependencies.
+
+**Website / live demo:** https://www.html-code-generator.com/javascript/box-shadow-parser
 
 ---
 
@@ -25,7 +27,7 @@ npm install css-box-shadow-parser
 ## Usage
 
 ```js
-const { parse, parseSingle, split } = require('css-box-shadow-parser');
+const { parse, parseSingle, split, stringify } = require('css-box-shadow-parser');
 
 // Single layer
 parse('4px 4px 10px rgba(0,0,0,0.4)');
@@ -38,6 +40,10 @@ parse('box-shadow: inset 0 2px 4px rgba(0,0,0,.24);');
 
 // CSS keyword -> empty array
 parse('none'); // []
+
+// Turn layer objects back into a CSS string
+stringify(parse('0 8px 24px #6c63ff66'));
+// "0 8px 24px rgba(108, 99, 255, 0.4)"
 ```
 
 ---
@@ -57,6 +63,30 @@ Parses a single shadow token. Returns `null` for invalid input.
 
 Splits a compound value on top-level commas without parsing.  
 Commas inside `rgba()`, `hsl()` etc. are correctly ignored.
+
+### `stringify(input)` -> `string`
+
+Serializes a layer object, or an array of layers, back into a CSS box-shadow string. The inverse of `parse()` - read a shadow, edit it in code, write it back to CSS.
+
+```js
+const layers = parse('6px 6px 12px #b8b9be, -6px -6px 12px #ffffff');
+layers[0].blur = 24;
+stringify(layers);
+// "6px 6px 24px #b8b9be, -6px -6px 12px #ffffff"
+```
+
+---
+
+## TypeScript
+
+The package ships with built-in type definitions - no `@types` install needed.
+
+```ts
+import { parse, stringify, BoxShadowLayer } from 'css-box-shadow-parser';
+
+const layers: BoxShadowLayer[] = parse('0 8px 24px rgba(0,0,0,0.4)');
+const css: string = stringify(layers);
+```
 
 ---
 
@@ -146,6 +176,12 @@ split('4px 4px 0 red, inset 0 0 10px rgba(0,0,0,.5)')
 | Named color     | `rebeccapurple`, `coral`, etc. |
 | `transparent`   | alpha = 0                      |
 | `currentcolor`  | resolves to `#000000`          |
+
+---
+
+## Demo
+
+Try it live: https://www.html-code-generator.com/javascript/box-shadow-parser
 
 ---
 

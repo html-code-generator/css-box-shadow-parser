@@ -1,16 +1,20 @@
 # css-box-shadow-parser
 
-Parse any CSS `box-shadow` value into structured JavaScript objects.  
+Parse any CSS `box-shadow` value into structured JavaScript objects - and turn them back into CSS.  
 Supports multi-layer shadows, all color formats, `inset`, and full CSS declarations.
+
+**Website / live demo:** https://www.html-code-generator.com/javascript/box-shadow-parser
 
 ---
 
 ## Features
 
 - Parses single and multi-layer shadows
-- Accepts full CSS declarations — `box-shadow: ...;`
+- `stringify()` converts layer objects back into a CSS box-shadow string (two-way)
+- Accepts full CSS declarations - `box-shadow: ...;`
 - All color formats: `hex`, `#rrggbbaa`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, named colors, `transparent`
 - Returns resolved 6-digit `hex` + numeric `alpha` for every layer
+- Built-in TypeScript definitions
 - Works in **browser** (script tag) and **Node.js** (CommonJS)
 - Zero dependencies
 
@@ -20,13 +24,15 @@ Supports multi-layer shadows, all color formats, `inset`, and full CSS declarati
 
 ```
 css-box-shadow-parser/
-├── parser.js      — source (UMD, browser + Node)
-├── demo.html      — interactive demo
-└── nmp/
-    ├── index.js   — standalone npm package entry
-    ├── package.json
-    ├── usage.js   — Node.js usage examples
-    └── README.md
+  parser.js        - source (UMD, browser + Node)
+  index.d.ts       - TypeScript definitions
+  index.html       - interactive demo
+  npm/
+    index.js       - standalone npm package entry
+    index.d.ts     - TypeScript definitions
+    package.json
+    usage.js       - Node.js usage examples
+    README.md
 ```
 
 ---
@@ -46,7 +52,7 @@ css-box-shadow-parser/
 ## Node.js Usage
 
 ```js
-const { parse, parseSingle, split } = require('./nmp/index');
+const { parse, parseSingle, split, stringify } = require('./npm/index');
 
 const layers = parse('4px 4px 10px rgba(0,0,0,0.4)');
 console.log(layers);
@@ -56,7 +62,7 @@ console.log(layers);
 
 ## API
 
-### `parse(shadow)` → `BoxShadowLayer[]`
+### `parse(shadow)` -> `BoxShadowLayer[]`
 
 Parses a full `box-shadow` value. Also accepts complete CSS declarations.
 
@@ -64,10 +70,10 @@ Parses a full `box-shadow` value. Also accepts complete CSS declarations.
 parse('0 2px 8px rgba(0,0,0,0.3)')
 parse('box-shadow: inset 0 2px 4px rgba(0,0,0,.24);')
 parse('0 1px 2px #0002, 0 4px 8px #0002')   // multi-layer
-parse('none')                                 // → []
+parse('none')                                 // -> []
 ```
 
-### `parseSingle(token)` → `BoxShadowLayer | null`
+### `parseSingle(token)` -> `BoxShadowLayer | null`
 
 Parses a single shadow token (no commas).
 
@@ -75,13 +81,40 @@ Parses a single shadow token (no commas).
 parseSingle('inset 0 2px 4px coral')
 ```
 
-### `split(shadow)` → `string[]`
+### `split(shadow)` -> `string[]`
 
 Splits a compound value into individual tokens without parsing.
 
 ```js
 split('4px 4px 0 red, inset 0 0 10px rgba(0,0,0,.5)')
-// → ['4px 4px 0 red', 'inset 0 0 10px rgba(0,0,0,.5)']
+// -> ['4px 4px 0 red', 'inset 0 0 10px rgba(0,0,0,.5)']
+```
+
+### `stringify(input)` -> `string`
+
+Serializes a layer object, or an array of layers, back into a CSS box-shadow string. The inverse of `parse()`.
+
+```js
+const layers = parse('6px 6px 12px #b8b9be, -6px -6px 12px #ffffff');
+layers[0].blur = 24;
+stringify(layers);
+// "6px 6px 24px #b8b9be, -6px -6px 12px #ffffff"
+
+stringify({ inset: false, x: 0, y: 8, blur: 24, spread: 0, hex: '#6c63ff', alpha: 0.4 });
+// "0 8px 24px rgba(108, 99, 255, 0.4)"
+```
+
+---
+
+## TypeScript
+
+The package ships with built-in type definitions - no `@types` install needed.
+
+```ts
+import { parse, stringify, BoxShadowLayer } from 'css-box-shadow-parser';
+
+const layers: BoxShadowLayer[] = parse('0 8px 24px rgba(0,0,0,0.4)');
+const css: string = stringify(layers);
 ```
 
 ---
@@ -98,7 +131,7 @@ Each layer is a `BoxShadowLayer` object:
 | `blur`   | `number`  | Blur radius in px                        |
 | `spread` | `number`  | Spread radius in px (can be negative)    |
 | `color`  | `string`  | Original CSS color token                 |
-| `alpha`  | `number`  | Opacity 0–1 (extracted from color)       |
+| `alpha`  | `number`  | Opacity 0-1 (extracted from color)       |
 | `hex`    | `string`  | Resolved 6-digit hex (e.g. `#663399`)    |
 
 ---
@@ -122,7 +155,7 @@ parse('0 8px 24px #00000066')
 parse('0 4px 8px transparent')
 // [{ inset:false, x:0, y:4, blur:8, spread:0, color:'transparent', alpha:0, hex:'#000000' }]
 
-// CSS keyword → empty
+// CSS keyword -> empty
 parse('none')    // []
 parse('initial') // []
 ```
@@ -131,7 +164,9 @@ parse('initial') // []
 
 ## Demo
 
-Open `demo.html` in your browser to interactively test any box-shadow value.
+Try it live: https://www.html-code-generator.com/javascript/box-shadow-parser
+
+Or open `index.html` in your browser to test any box-shadow value locally.
 
 ---
 
