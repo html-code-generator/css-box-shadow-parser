@@ -3,8 +3,8 @@
  * Parse CSS box-shadow values into structured layer objects.
  * https://github.com/html-code-generator/css-box-shadow-parser
  *
- * @author  HTML Code Generator <htmlcodegenerator.com@gmail.com>
- * @website https://www.html-code-generator.com/
+ * @author  HTML Code Generator
+ * @website https://www.html-code-generator.com/javascript/box-shadow-parser
  * @license MIT
  */
 

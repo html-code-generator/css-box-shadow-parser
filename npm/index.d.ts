@@ -4,7 +4,7 @@
  * https://github.com/html-code-generator/css-box-shadow-parser
  *
  * @author  HTML Code Generator
- * @website https://www.html-code-generator.com/
+ * @website https://www.html-code-generator.com/javascript/box-shadow-parser
  * @license MIT
  */
 

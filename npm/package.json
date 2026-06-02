@@ -21,7 +21,7 @@
     "browser",
     "node"
   ],
-  "author": "HTML Code Generator <htmlcodegenerator.com@gmail.com> (https://www.html-code-generator.com/)",
+  "author": "HTML Code Generator (https://www.html-code-generator.com/)",
   "license": "MIT",
   "files": [
     "index.js",
@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/html-code-generator/css-box-shadow-parser/issues"
   },
-  "homepage": "https://www.html-code-generator.com/",
+  "homepage": "https://www.html-code-generator.com/javascript/box-shadow-parser",
   "unpkg": "index.js",
   "jsdelivr": "index.js"
 }

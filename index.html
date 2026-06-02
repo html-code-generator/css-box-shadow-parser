@@ -177,6 +177,28 @@
 
         .output-panel .section-title { margin-bottom: 12px; }
 
+        .round-trip-note {
+            font-size: .8rem;
+            color: #888;
+            line-height: 1.6;
+            margin: 20px 0 12px;
+        }
+
+        #css-output:not(:empty) { margin-top: 12px; }
+
+        .css-result {
+            background: #0f0f13;
+            border: 1px solid #2a2a35;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: .82rem;
+            line-height: 1.6;
+            color: #b5cea8;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
         #output {
             max-height: 340px;
             overflow-y: auto;
@@ -241,6 +263,10 @@
 <div class="output-panel" id="output-panel">
     <p class="section-title">Parsed layers</p>
     <div id="output"><p class="empty-state">Select an example or enter a value above.</p></div>
+
+    <p class="round-trip-note">Got the parsed objects? Click <strong>Back to CSS</strong> to run them through <code>stringify()</code> - the inverse of <code>parse()</code> - and rebuild a valid <code>box-shadow</code> string. That is the full round-trip: read a shadow, edit the values, and write it straight back to CSS.</p>
+    <button class="parse-btn" onclick="backToCss()">Back to CSS</button>
+    <div id="css-output"></div>
 </div>
 
 <!-- Shadow style examples -->
@@ -451,7 +477,12 @@ function renderCards(examples, gridId) {
     });
 }
 
+let lastLayers = [];
+
 function renderOutput(layers) {
+    lastLayers = layers || [];
+    document.getElementById('css-output').innerHTML = '';
+
     const out = document.getElementById('output');
     if (!layers.length) {
         out.innerHTML = '<p class="empty-state">No layers parsed.</p>';
@@ -502,10 +533,19 @@ function renderOutput(layers) {
     out.innerHTML = `<div class="json-output">${lines.join('\n')}</div>`;
 }
 
+function backToCss() {
+    if (!lastLayers.length) return;
+    const css = BoxShadowParser.stringify(lastLayers);
+    document.getElementById('css-output').innerHTML =
+        `<div class="css-result">box-shadow: ${css};</div>`;
+}
+
 function clearAll() {
+    lastLayers = [];
     document.getElementById('custom-input').value = '';
     document.getElementById('custom-result').textContent = '';
     document.getElementById('output').innerHTML = '<p class="empty-state">Select an example or enter a value above.</p>';
+    document.getElementById('css-output').innerHTML = '';
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
 }
 
